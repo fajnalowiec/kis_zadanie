@@ -91,6 +91,14 @@ Nie tworz nowych warstw ani katalogow bez rzeczywistej potrzeby.
 - Tworz testy funkcjonalne dla endpointow API.
 - Nie tworz testow jednostkowych dla samych encji Doctrine.
 - Testy jednostkowe musza byc szybkie i niezalezne od bazy danych oraz sieci.
+- Testy funkcjonalne korzystaja wylacznie z osobnej bazy `main_test`.
+- Baze `main_test` utworz i przygotuj kompletem migracji przed uruchomieniem
+  testow.
+- Kazdy test funkcjonalny wykonuj w osobnej transakcji i automatycznie cofaj
+  ja po zakonczeniu testu za pomoca DAMA DoctrineTestBundle.
+- Kazdy test funkcjonalny musi rozpoczynac sie z identycznym stanem bazy
+  wynikajacym z migracji i nie moze zmieniac bazy deweloperskiej `main`.
+- Nie wykonuj zmian schematu bazy wewnatrz testow transakcyjnych.
 - Dla endpointow tworz testy funkcjonalne obejmujace poprawne odpowiedzi,
   walidacje, bledy i najwazniejsze kody HTTP.
 - Kazda naprawa bledu powinna zawierac test zapobiegajacy regresji.

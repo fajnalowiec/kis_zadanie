@@ -12,4 +12,7 @@
             <directory>tests/Functional</directory>
         </testsuite>
     </testsuites>
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
 </phpunit>

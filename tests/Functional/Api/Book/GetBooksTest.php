@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api\Book;
 
-use App\Kernel;
-use PHPUnit\Framework\TestCase;
+use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-final class GetBooksTest extends TestCase
+final class GetBooksTest extends FunctionalTestCase
 {
     public function testItReturnsPaginatedBooksUsingConfiguredPageSize(): void
     {
-        $kernel = new Kernel('dev', false);
         $firstPageRequest = Request::create(
             '/api/books?page=1&itemsPerPage=100',
             Request::METHOD_GET,
@@ -20,7 +18,7 @@ final class GetBooksTest extends TestCase
         );
 
         try {
-            $firstPageResponse = $kernel->handle($firstPageRequest);
+            $firstPageResponse = $this->kernel->handle($firstPageRequest);
             $firstPage = json_decode(
                 $firstPageResponse->getContent(),
                 true,
@@ -37,7 +35,7 @@ final class GetBooksTest extends TestCase
             );
             self::assertArrayHasKey('last', $firstPage['view']);
 
-            $kernel->terminate($firstPageRequest, $firstPageResponse);
+            $this->kernel->terminate($firstPageRequest, $firstPageResponse);
             unset($firstPageResponse);
 
             $secondPageRequest = Request::create(
@@ -45,7 +43,7 @@ final class GetBooksTest extends TestCase
                 Request::METHOD_GET,
                 server: ['HTTP_ACCEPT' => 'application/ld+json']
             );
-            $secondPageResponse = $kernel->handle($secondPageRequest);
+            $secondPageResponse = $this->kernel->handle($secondPageRequest);
             $secondPage = json_decode(
                 $secondPageResponse->getContent(),
                 true,
@@ -56,10 +54,8 @@ final class GetBooksTest extends TestCase
             self::assertCount(5, $secondPage['member']);
         } finally {
             if (isset($secondPageRequest, $secondPageResponse)) {
-                $kernel->terminate($secondPageRequest, $secondPageResponse);
+                $this->kernel->terminate($secondPageRequest, $secondPageResponse);
             }
-
-            $kernel->shutdown();
         }
     }
 }

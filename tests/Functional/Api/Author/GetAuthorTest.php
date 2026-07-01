@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api\Author;
 
-use App\Kernel;
-use PHPUnit\Framework\TestCase;
+use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-final class GetAuthorTest extends TestCase
+final class GetAuthorTest extends FunctionalTestCase
 {
     public function testItReturnsAuthor(): void
     {
-        $kernel = new Kernel('dev', false);
         $request = Request::create(
             '/api/authors/1',
             Request::METHOD_GET,
@@ -20,7 +18,7 @@ final class GetAuthorTest extends TestCase
         );
 
         try {
-            $response = $kernel->handle($request);
+            $response = $this->kernel->handle($request);
             $data = json_decode($response->getContent(), true, flags: JSON_THROW_ON_ERROR);
 
             self::assertSame(200, $response->getStatusCode());
@@ -29,10 +27,8 @@ final class GetAuthorTest extends TestCase
             self::assertSame('Shakespeare', $data['surname']);
         } finally {
             if (isset($response)) {
-                $kernel->terminate($request, $response);
+                $this->kernel->terminate($request, $response);
             }
-
-            $kernel->shutdown();
         }
     }
 }
