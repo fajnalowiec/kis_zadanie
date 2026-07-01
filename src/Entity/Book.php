@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(operations: [
+    new GetCollection(uriTemplate: '/books'),
+])]
 #[ORM\Entity]
 class Book
 {
