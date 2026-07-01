@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(operations: [
+    new Get(uriTemplate: '/authors/{id}'),
+])]
 #[ORM\Entity]
 class Author
 {
