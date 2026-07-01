@@ -10,7 +10,7 @@ services:
     environment:
       DATABASE_URL: "postgresql://main:main@db:5432/main?serverVersion=17&charset=utf8"
     volumes:
-      - /Users/fajnalowiec/php_dev_env/www:/var/www/html
+      - .:/var/www/html/kis_zadanie
       - ~/.ssh:/root/.ssh:ro
     depends_on:
       - db

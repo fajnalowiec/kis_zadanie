@@ -49,4 +49,4 @@ ENV COMPOSER_HOME=/tmp/composer
 
 WORKDIR /var/www/html
 
-CMD ["bash", "-lc", "if [ ! -f kis_zadanie/composer.json ]; then composer create-project symfony/skeleton:\"8.1.*\" kis_zadanie && cd kis_zadanie && composer require api symfony/apache-pack; fi && exec apache2-foreground"]
+CMD ["bash", "-lc", "cd kis_zadanie && composer install --no-interaction && exec apache2-foreground"]
