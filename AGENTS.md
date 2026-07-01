@@ -88,6 +88,7 @@ Nie tworz nowych warstw ani katalogow bez rzeczywistej potrzeby.
 ## Testy
 
 - Tworz testy jednostkowe w PHPUnit dla logiki biznesowej.
+- Tworz testy funkcjonalne dla endpointow API.
 - Nie tworz testow jednostkowych dla samych encji Doctrine.
 - Testy jednostkowe musza byc szybkie i niezalezne od bazy danych oraz sieci.
 - Dla endpointow tworz testy funkcjonalne obejmujace poprawne odpowiedzi,
