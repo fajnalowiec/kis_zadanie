@@ -25,6 +25,6 @@ final class Version20260701171601 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DELETE FROM book_loan;');
+        $this->addSql('DELETE FROM book_loan WHERE id IN (1, 2);');
     }
 }

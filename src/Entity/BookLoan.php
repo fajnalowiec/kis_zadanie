@@ -24,7 +24,7 @@ class BookLoan
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     private Customer $customer;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, options: ['default' => 'CURRENT_DATE'])]
     private DateTimeImmutable $borrowedAt;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]

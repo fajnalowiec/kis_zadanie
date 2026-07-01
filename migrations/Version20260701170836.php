@@ -19,7 +19,7 @@ final class Version20260701170836 extends AbstractMigration
         $this->addSql(
             "INSERT INTO book (title, author_id) VALUES
                 ('Hamlet', 1),
-                ('Makbeth', 1),
+                ('Macbeth', 1),
                 ('The Old Man and the Sea', 2),
                 ('A Farewell to Arms', 2)"
         );
