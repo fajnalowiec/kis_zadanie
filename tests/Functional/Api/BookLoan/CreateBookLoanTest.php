@@ -37,6 +37,7 @@ final class CreateBookLoanTest extends FunctionalTestCase
 
             self::assertSame(409, $response->getStatusCode());
             self::assertSame('Book is already borrowed.', $data['detail']);
+            self::assertArrayNotHasKey('trace', $data);
         } finally {
             if (isset($response)) {
                 $this->kernel->terminate($request, $response);
@@ -65,8 +66,10 @@ final class CreateBookLoanTest extends FunctionalTestCase
 
         try {
             $response = $this->kernel->handle($request);
+            $data = json_decode($response->getContent(), true, flags: JSON_THROW_ON_ERROR);
 
             self::assertSame(400, $response->getStatusCode());
+            self::assertArrayNotHasKey('trace', $data);
         } finally {
             if (isset($response)) {
                 $this->kernel->terminate($request, $response);

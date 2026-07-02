@@ -40,6 +40,7 @@ final class ReturnBookLoanTest extends FunctionalTestCase
 
             self::assertSame(409, $response->getStatusCode());
             self::assertSame('Book is not borrowed.', $data['detail']);
+            self::assertArrayNotHasKey('trace', $data);
         } finally {
             if (isset($response)) {
                 $this->kernel->terminate($request, $response);

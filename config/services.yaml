@@ -19,6 +19,11 @@ services:
     App\:
         resource: '../src/'
 
+    App\Serializer\ApiErrorSerializerContextBuilder:
+        decorates: 'api_platform.serializer.context_builder'
+        arguments:
+            $decorated: '@App\Serializer\ApiErrorSerializerContextBuilder.inner'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
