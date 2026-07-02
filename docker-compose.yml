@@ -9,11 +9,11 @@ services:
       - "8090:80"
     environment:
       DATABASE_URL: "postgresql://main:main@db:5432/main?serverVersion=17&charset=utf8"
-    volumes:
-      - .:/var/www/html/kis_zadanie
-      - ~/.ssh:/root/.ssh:ro
+      GIT_REPOSITORY: "https://github.com/fajnalowiec/kis_zadanie.git"
+      GIT_BRANCH: "main"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:17-alpine
@@ -26,6 +26,11 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U main -d main"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
 
   adminer:
     image: adminer
@@ -35,7 +40,8 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:

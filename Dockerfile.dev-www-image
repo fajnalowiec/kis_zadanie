@@ -46,7 +46,9 @@ RUN { \
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_HOME=/tmp/composer
+ENV GIT_REPOSITORY=https://github.com/fajnalowiec/kis_zadanie.git
+ENV GIT_BRANCH=main
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html/kis_zadanie
 
-CMD ["bash", "-lc", "cd kis_zadanie && composer install --no-interaction && exec apache2-foreground"]
+CMD ["bash", "-lc", "set -euo pipefail; if [ ! -d .git ]; then git clone --branch \"$GIT_BRANCH\" --single-branch \"$GIT_REPOSITORY\" .; else git fetch origin \"$GIT_BRANCH\" && git checkout -B \"$GIT_BRANCH\" \"origin/$GIT_BRANCH\"; fi; composer install --no-interaction; php bin/console doctrine:migrations:migrate --no-interaction; APP_ENV=test php bin/console doctrine:database:create --if-not-exists --no-interaction; APP_ENV=test php bin/console doctrine:migrations:migrate --no-interaction; vendor/bin/phpunit; exec apache2-foreground"]
