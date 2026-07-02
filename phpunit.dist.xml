@@ -4,6 +4,9 @@
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
          colors="true">
+    <php>
+        <env name="SHELL_VERBOSITY" value="-1" force="true"/>
+    </php>
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>

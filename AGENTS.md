@@ -39,7 +39,7 @@ Stosuj standardowa strukture Symfony i API Platform:
 - `src/ApiResource` - zasoby API, gdy nie sa bezposrednio encjami Doctrine
 - `src/Entity` - encje Doctrine
 - `src/Repository` - repozytoria Doctrine
-- `src/State` - providery i processory API Platform
+- `src/Processor` - processory API Platform
 - `src/Controller` - tylko kontrolery wymagane poza standardowym mechanizmem API Platform
 - `src/Service` - serwisy aplikacyjne i logika biznesowa
 - `config` - konfiguracja Symfony i API Platform

@@ -4,11 +4,34 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use App\Processor\BorrowBookLoanProcessor;
+use App\Processor\ReturnBookLoanProcessor;
+use App\Repository\BookLoanRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ApiResource(operations: [
+    new Post(
+        uriTemplate: '/book-loans/borrow',
+        processor: BorrowBookLoanProcessor::class,
+        denormalizationContext: ['groups' => ['book_loan:borrow']],
+        validationContext: ['groups' => ['book_loan:borrow']]
+    ),
+    new Post(
+        uriTemplate: '/book-loans/return',
+        status: Response::HTTP_OK,
+        processor: ReturnBookLoanProcessor::class,
+        denormalizationContext: ['groups' => ['book_loan:return']],
+        validationContext: ['groups' => ['book_loan:return']]
+    ),
+])]
+#[ORM\Entity(repositoryClass: BookLoanRepository::class)]
 class BookLoan
 {
     #[ORM\Id]
@@ -18,11 +41,15 @@ class BookLoan
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Book $book;
+    #[Assert\NotNull(groups: ['book_loan:borrow', 'book_loan:return'])]
+    #[Groups(['book_loan:borrow', 'book_loan:return'])]
+    private ?Book $book = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
-    private Customer $customer;
+    #[Assert\NotNull(groups: ['book_loan:borrow'])]
+    #[Groups(['book_loan:borrow'])]
+    private ?Customer $customer = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, options: ['default' => 'CURRENT_DATE'])]
     private DateTimeImmutable $borrowedAt;
@@ -30,11 +57,9 @@ class BookLoan
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $returnedAt = null;
 
-    public function __construct(Book $book, Customer $customer, DateTimeImmutable $borrowedAt)
+    public function __construct()
     {
-        $this->book = $book;
-        $this->customer = $customer;
-        $this->borrowedAt = $borrowedAt;
+        $this->borrowedAt = new DateTimeImmutable('today');
     }
 
     public function getId(): ?int
@@ -42,7 +67,7 @@ class BookLoan
         return $this->id;
     }
 
-    public function getBook(): Book
+    public function getBook(): ?Book
     {
         return $this->book;
     }
@@ -54,7 +79,7 @@ class BookLoan
         return $this;
     }
 
-    public function getCustomer(): Customer
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
