@@ -14,17 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookLoanRepository extends ServiceEntityRepository
 {
-    private ?BookLoan $latestBookLoan = null;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BookLoan::class);
     }
 
-    public function isBookBorrowed(int $bookId): bool
-    {
-        $this->latestBookLoan = null;
-
+    public function isBookBorrowed(
+        int $bookId,
+        ?BookLoan &$latestBookLoan = null
+    ): bool {
         $latestId = $this->createQueryBuilder('bookLoan')
             ->select('MAX(bookLoan.id)')
             ->where('IDENTITY(bookLoan.book) = :bookId')
@@ -33,16 +31,13 @@ class BookLoanRepository extends ServiceEntityRepository
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
 
         if ($latestId === null) {
+            $latestBookLoan = null;
+
             return false;
         }
 
-        $this->latestBookLoan = $this->find((int) $latestId);
+        $latestBookLoan = $this->find((int) $latestId);
 
-        return $this->latestBookLoan?->getReturnedAt() === null;
-    }
-
-    public function getLatestBookLoan(): ?BookLoan
-    {
-        return $this->latestBookLoan;
+        return $latestBookLoan?->getReturnedAt() === null;
     }
 }

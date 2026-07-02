@@ -45,14 +45,15 @@ final readonly class ReturnBookLoanProcessor implements ProcessorInterface
                 }
 
                 $entityManager->lock($book, LockMode::PESSIMISTIC_WRITE);
+                $latestBookLoan = null;
 
-                if (!$this->bookLoanRepository->isBookBorrowed($book->getId())) {
-                    throw new ConflictHttpException('Book is not borrowed.');
-                }
-
-                $latestBookLoan = $this->bookLoanRepository->getLatestBookLoan();
-
-                if ($latestBookLoan === null) {
+                if (
+                    !$this->bookLoanRepository->isBookBorrowed(
+                        $book->getId(),
+                        $latestBookLoan
+                    )
+                    || $latestBookLoan === null
+                ) {
                     throw new ConflictHttpException('Book is not borrowed.');
                 }
 

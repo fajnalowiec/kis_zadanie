@@ -74,9 +74,6 @@ final class ReturnBookLoanProcessorTest extends TestCase
             ->method('isBookBorrowed')
             ->with(100000)
             ->willReturn(false);
-        $this->bookLoanRepository
-            ->expects(self::never())
-            ->method('getLatestBookLoan');
         $this->entityManager->expects(self::never())->method('flush');
 
         $this->expectException(ConflictHttpException::class);
@@ -102,12 +99,17 @@ final class ReturnBookLoanProcessorTest extends TestCase
         $this->bookLoanRepository
             ->expects(self::once())
             ->method('isBookBorrowed')
-            ->with(100000)
-            ->willReturn(true);
-        $this->bookLoanRepository
-            ->expects(self::once())
-            ->method('getLatestBookLoan')
-            ->willReturn($latestBookLoan);
+            ->willReturnCallback(
+                static function (
+                    int $bookId,
+                    ?BookLoan &$result
+                ) use ($latestBookLoan): bool {
+                    self::assertSame(100000, $bookId);
+                    $result = $latestBookLoan;
+
+                    return true;
+                }
+            );
         $this->entityManager->expects(self::once())->method('flush');
 
         $result = $this->processor->process($input, new Post());

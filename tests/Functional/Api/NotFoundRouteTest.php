@@ -43,4 +43,27 @@ final class NotFoundRouteTest extends FunctionalTestCase
             }
         }
     }
+
+    public function testItReturnsMethodNotAllowedForKnownUrl(): void
+    {
+        $request = Request::create(
+            '/api/authors/1',
+            Request::METHOD_POST,
+            server: ['HTTP_ACCEPT' => 'application/json']
+        );
+
+        try {
+            $response = $this->kernel->handle($request);
+            $data = json_decode($response->getContent(), true, flags: JSON_THROW_ON_ERROR);
+
+            self::assertSame(405, $response->getStatusCode());
+            self::assertSame('GET', $response->headers->get('Allow'));
+            self::assertSame('Method Not Allowed', $data['title']);
+            self::assertArrayNotHasKey('trace', $data);
+        } finally {
+            if (isset($response)) {
+                $this->kernel->terminate($request, $response);
+            }
+        }
+    }
 }
